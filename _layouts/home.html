@@ -1,0 +1,26 @@
+---
+layout: default
+---
+{%- if site.posts.size == 0 -%}
+<p class="empty">아직 공개된 기록이 없습니다.</p>
+{%- endif -%}
+
+{%- assign months = site.posts | group_by_exp: "p", "p.date | date: '%Y-%m'" -%}
+{%- for month in months -%}
+{%- assign first = month.items | first -%}
+<section class="month">
+  <h2 class="month-label">
+    <span class="y">{{ first.date | date: "%Y" }}</span>
+    <span class="m">{{ first.date | date: "%-m" }}월</span>
+  </h2>
+  {%- for post in month.items %}
+  <article class="entry">
+    {% include entry-date.html date=post.date %}
+    <div class="entry-main">
+      <h3 class="entry-title"><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
+      <div class="entry-body">{{ post.content }}</div>
+    </div>
+  </article>
+  {%- endfor %}
+</section>
+{%- endfor -%}
