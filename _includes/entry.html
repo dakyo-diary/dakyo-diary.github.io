@@ -1,0 +1,28 @@
+{%- assign post = include.post -%}
+<article class="entry{% if post.kind == 'review' %} entry--review{% endif %}">
+  {% include entry-date.html date=post.date url=post.url %}
+  <div class="entry-main">
+    {%- if post.kind == 'review' %}
+    <p class="review-label">
+      <a href="{{ '/reviews/' | append: post.category_slug | append: '/' | relative_url }}">{{ post.category }}</a>
+      {%- if post.rating %}<span class="rating" aria-label="평점 {{ post.rating }}점">★ {{ post.rating }}</span>{% endif %}
+    </p>
+    <h3 class="work-title"><a href="{{ post.url | relative_url }}">{{ post.work }}</a></h3>
+    {%- unless post.auto_title %}
+    <p class="review-line">{{ post.title }}</p>
+    {%- endunless %}
+    {%- else %}
+    {%- unless post.auto_title %}
+    <h3 class="entry-title"><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
+    {%- endunless %}
+    {%- endif %}
+    {%- if post.spoiler %}
+    <details class="spoiler">
+      <summary>스포일러 포함 · 펼쳐 보기</summary>
+      <div class="entry-body">{{ post.content }}</div>
+    </details>
+    {%- else %}
+    <div class="entry-body">{{ post.content }}</div>
+    {%- endif %}
+  </div>
+</article>
