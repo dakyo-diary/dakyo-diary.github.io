@@ -7,7 +7,8 @@
 {%- if page.layout == "post" -%}
   {%- assign wd_index = page.date | date: "%w" | plus: 0 -%}
   {%- capture date_label %}{{ page.date | date: "%Y년 %-m월 %-d일" }} ({{ weekdays[wd_index] }}){% endcapture -%}
-  {%- assign body_text = page.content | strip_html | normalize_whitespace | truncate: 280 -%}
+  {%- comment %} Plain-text excerpt written by the server (absent for spoilers/locked). {% endcomment -%}
+  {%- assign body_text = page.description | default: "" -%}
   {%- if page.locked -%}
     {%- assign meta_title = "🔒 잠긴 글" -%}
     {%- capture meta_desc %}{{ date_label }} · 비밀번호를 아는 사람만 볼 수 있는 글입니다.{% endcapture -%}
