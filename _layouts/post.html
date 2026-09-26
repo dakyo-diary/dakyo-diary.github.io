@@ -1,0 +1,21 @@
+---
+layout: default
+---
+<article class="entry entry--single">
+  {% include entry-date.html date=page.date %}
+  <div class="entry-main">
+    <p class="entry-month">{{ page.date | date: "%Y년 %-m월" }}</p>
+    <h1 class="entry-title">{{ page.title }}</h1>
+    <div class="entry-body">{{ content }}</div>
+  </div>
+</article>
+
+<nav class="pager">
+  {%- if page.next %}
+  <a class="newer" href="{{ page.next.url | relative_url }}"><span>다음 기록</span>{{ page.next.title }}</a>
+  {%- else %}<span></span>{% endif %}
+  {%- if page.previous %}
+  <a class="older" href="{{ page.previous.url | relative_url }}"><span>이전 기록</span>{{ page.previous.title }}</a>
+  {%- endif %}
+</nav>
+<p class="back"><a href="{{ '/' | relative_url }}">전체 기록</a></p>
