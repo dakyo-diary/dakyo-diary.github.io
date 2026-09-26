@@ -97,7 +97,22 @@ a { color: inherit; }
 }
 .month-label + .entry { border-top-color: var(--ink); }
 
+.entry-side { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
 .entry-date { text-decoration: none; align-self: start; }
+.share-btn {
+  font-family: var(--sans);
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  color: var(--faint);
+  background: none;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  padding: 1px 9px;
+  cursor: pointer;
+  line-height: 1.6;
+}
+.share-btn:hover { color: var(--mark); border-color: var(--mark); }
+.single-meta .share-btn { margin-left: 10px; vertical-align: 1px; }
 .entry-date time {
   display: flex;
   flex-direction: column;
@@ -240,7 +255,8 @@ a { color: inherit; }
 @media (max-width: 540px) {
   body { font-size: 16px; }
   .entry { grid-template-columns: 1fr; }
-  .entry-date time { flex-direction: row; align-items: baseline; gap: 8px; margin-bottom: 6px; }
+  .entry-side { flex-direction: row; align-items: baseline; justify-content: space-between; margin-bottom: 6px; }
+  .entry-date time { flex-direction: row; align-items: baseline; gap: 8px; }
   .entry-date .day { font-size: 20px; }
   .entry-date .sub { margin-top: 0; }
 }
