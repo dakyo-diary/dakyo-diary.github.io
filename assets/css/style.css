@@ -56,6 +56,21 @@ a { color: inherit; }
   text-decoration: none;
 }
 
+.sections { display: flex; gap: 18px; font-family: var(--sans); font-size: 14px; }
+.sections a, .subnav a { color: var(--soft); text-decoration: none; }
+.sections a:hover, .subnav a:hover { color: var(--ink); }
+.sections a[aria-current="page"] { color: var(--ink); font-weight: 600; }
+
+.subnav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  margin: calc(-1 * clamp(18px, 4vw, 36px)) 0 clamp(28px, 5vw, 44px);
+  font-family: var(--sans);
+  font-size: 13px;
+}
+.subnav a[aria-current="page"] { color: var(--mark); }
+
 .empty { color: var(--soft); font-family: var(--sans); font-size: 15px; }
 
 /* month groups */
@@ -105,10 +120,45 @@ a { color: inherit; }
 .entry-body p:last-child { margin-bottom: 0; }
 .entry-body a { color: var(--mark); text-underline-offset: 3px; }
 
+/* reviews */
+.review-label {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  margin: 0 0 2px;
+  font-family: var(--sans);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+}
+.review-label a { color: var(--mark); text-decoration: none; }
+.rating { color: var(--soft); }
+.work-title { margin: 0 0 4px; font-size: 18px; font-weight: 700; line-height: 1.5; }
+.work-title a { text-decoration: none; }
+.work-title a:hover { color: var(--mark); }
+.review-line { margin: 0 0 8px; color: var(--soft); }
+.review-line::before { content: "— "; }
+
+.spoiler summary {
+  cursor: pointer;
+  list-style: none;
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--soft);
+  padding: 6px 0;
+}
+.spoiler summary::-webkit-details-marker { display: none; }
+.spoiler summary::after { content: " ↓"; }
+.spoiler[open] summary::after { content: " ↑"; }
+.spoiler[open] summary { margin-bottom: 6px; }
+
 /* single entry */
 .single-meta { margin: 0 0 14px; font-family: var(--sans); font-size: 13px; color: var(--soft); letter-spacing: 0.01em; }
 .single-title { margin: 0 0 22px; font-size: clamp(22px, 4.5vw, 28px); font-weight: 700; line-height: 1.45; }
 .single-body { font-size: 18px; }
+.single-meta a { color: var(--mark); text-decoration: none; }
+.single-rating { margin: -12px 0 14px; font-family: var(--sans); font-size: 15px; color: var(--ink); }
+.single-rating span { color: var(--faint); font-size: 13px; }
+.review-line--single { font-size: 18px; margin: 0 0 22px; }
 
 .pager {
   display: flex;
