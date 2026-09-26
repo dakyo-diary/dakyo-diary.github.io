@@ -1,21 +1,24 @@
 ---
 layout: default
 ---
-<article class="entry entry--single">
-  {% include entry-date.html date=page.date %}
-  <div class="entry-main">
-    <p class="entry-month">{{ page.date | date: "%Y년 %-m월" }}</p>
-    <h1 class="entry-title">{{ page.title }}</h1>
-    <div class="entry-body">{{ content }}</div>
-  </div>
+{%- assign weekdays = "일,월,화,수,목,금,토" | split: "," -%}
+{%- assign wd_index = page.date | date: "%w" | plus: 0 -%}
+<article class="single">
+  <p class="single-meta">
+    <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%Y년 %-m월 %-d일" }} {{ weekdays[wd_index] }}요일 · {{ page.date | date: "%H:%M" }}</time>
+  </p>
+  {%- unless page.auto_title %}
+  <h1 class="single-title">{{ page.title }}</h1>
+  {%- endunless %}
+  <div class="entry-body single-body">{{ content }}</div>
 </article>
 
 <nav class="pager">
   {%- if page.next %}
-  <a class="newer" href="{{ page.next.url | relative_url }}"><span>다음 기록</span>{{ page.next.title }}</a>
+  <a class="newer" href="{{ page.next.url | relative_url }}"><span>다음 기록</span>{% if page.next.auto_title %}{{ page.next.date | date: "%-m월 %-d일" }}{% else %}{{ page.next.title }}{% endif %}</a>
   {%- else %}<span></span>{% endif %}
   {%- if page.previous %}
-  <a class="older" href="{{ page.previous.url | relative_url }}"><span>이전 기록</span>{{ page.previous.title }}</a>
+  <a class="older" href="{{ page.previous.url | relative_url }}"><span>이전 기록</span>{% if page.previous.auto_title %}{{ page.previous.date | date: "%-m월 %-d일" }}{% else %}{{ page.previous.title }}{% endif %}</a>
   {%- endif %}
 </nav>
 <p class="back"><a href="{{ '/' | relative_url }}">전체 기록</a></p>
