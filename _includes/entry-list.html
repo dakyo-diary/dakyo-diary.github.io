@@ -1,6 +1,8 @@
 {%- if include.posts.size == 0 -%}
 <p class="empty">아직 공개된 기록이 없습니다.</p>
 {%- endif -%}
+{%- assign locked_posts = include.posts | where: "locked", true -%}
+{%- if locked_posts.size > 0 %}{% include lock-form.html %}{% endif -%}
 {%- assign months = include.posts | group_by_exp: "p", "p.date | date: '%Y-%m'" -%}
 {%- for month in months -%}
 {%- assign first = month.items | first -%}
