@@ -1,0 +1,42 @@
+{%- comment -%}
+  Link-preview metadata (Slack, Discord, KakaoTalk… read Open Graph tags).
+  Locked posts never leak content; spoiler reviews show a notice instead of
+  the text; automatic titles become the date.
+{%- endcomment -%}
+{%- assign weekdays = "일,월,화,수,목,금,토" | split: "," -%}
+{%- if page.layout == "post" -%}
+  {%- assign wd_index = page.date | date: "%w" | plus: 0 -%}
+  {%- capture date_label %}{{ page.date | date: "%Y년 %-m월 %-d일" }} ({{ weekdays[wd_index] }}){% endcapture -%}
+  {%- assign body_text = page.content | strip_html | normalize_whitespace | truncate: 280 -%}
+  {%- if page.locked -%}
+    {%- assign meta_title = "🔒 잠긴 글" -%}
+    {%- capture meta_desc %}{{ date_label }} · 비밀번호를 아는 사람만 볼 수 있는 글입니다.{% endcapture -%}
+  {%- elsif page.kind == "review" -%}
+    {%- capture meta_title %}{{ page.work }} — {{ page.category }}{% if page.rating %} ★{{ page.rating }}{% endif %}{% endcapture -%}
+    {%- capture meta_desc -%}
+      {%- unless page.auto_title %}“{{ page.title }}” {% endunless -%}
+      {%- if page.spoiler %}(스포일러가 포함된 후기입니다){% else %}{{ body_text }}{% endif -%}
+    {%- endcapture -%}
+  {%- else -%}
+    {%- if page.auto_title -%}{%- assign meta_title = date_label -%}{%- else -%}{%- assign meta_title = page.title -%}{%- endif -%}
+    {%- assign meta_desc = body_text -%}
+  {%- endif -%}
+{%- else -%}
+  {%- assign meta_title = page.title | default: site.title -%}
+  {%- assign meta_desc = site.description | default: "일기와 감상 기록" -%}
+{%- endif -%}
+  <title>{% if page.layout == "post" or page.title %}{{ meta_title | strip }} — {% endif %}{{ site.title }}</title>
+  <meta name="description" content="{{ meta_desc | strip | escape }}">
+  <meta property="og:site_name" content="{{ site.title | escape }}">
+  <meta property="og:title" content="{{ meta_title | strip | escape }}">
+  <meta property="og:description" content="{{ meta_desc | strip | escape }}">
+  <meta property="og:type" content="{% if page.layout == 'post' %}article{% else %}website{% endif %}">
+  <meta property="og:url" content="{{ page.url | absolute_url }}">
+  <meta property="og:locale" content="ko_KR">
+  {%- if page.layout == "post" %}
+  <meta property="article:published_time" content="{{ page.date | date_to_xmlschema }}">
+  {%- endif %}
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="{{ meta_title | strip | escape }}">
+  <meta name="twitter:description" content="{{ meta_desc | strip | escape }}">
+  <meta name="theme-color" content="#9c5b3c">
