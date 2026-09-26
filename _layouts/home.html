@@ -1,28 +1,25 @@
 ---
 layout: default
 ---
-{%- if site.posts.size == 0 -%}
-<p class="empty">아직 공개된 기록이 없습니다.</p>
+{%- if page.filter == "diary" -%}
+  {%- assign posts = site.posts | where_exp: "p", "p.kind != 'review'" -%}
+{%- elsif page.filter == "review" -%}
+  {%- if page.category_slug -%}
+    {%- assign posts = site.posts | where: "category_slug", page.category_slug -%}
+  {%- else -%}
+    {%- assign posts = site.posts | where: "kind", "review" -%}
+  {%- endif -%}
+{%- else -%}
+  {%- assign posts = site.posts -%}
 {%- endif -%}
 
-{%- assign months = site.posts | group_by_exp: "p", "p.date | date: '%Y-%m'" -%}
-{%- for month in months -%}
-{%- assign first = month.items | first -%}
-<section class="month">
-  <h2 class="month-label">
-    <span class="y">{{ first.date | date: "%Y" }}</span>
-    <span class="m">{{ first.date | date: "%-m" }}월</span>
-  </h2>
-  {%- for post in month.items %}
-  <article class="entry">
-    {% include entry-date.html date=post.date url=post.url %}
-    <div class="entry-main">
-      {%- unless post.auto_title %}
-      <h3 class="entry-title"><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
-      {%- endunless %}
-      <div class="entry-body">{{ post.content }}</div>
-    </div>
-  </article>
+{%- if page.filter == "review" -%}
+<nav class="subnav" aria-label="분류">
+  <a href="{{ '/reviews/' | relative_url }}"{% unless page.category_slug %} aria-current="page"{% endunless %}>전체</a>
+  {%- for c in site.data.review_categories %}
+  <a href="{{ '/reviews/' | append: c.slug | append: '/' | relative_url }}"{% if page.category_slug == c.slug %} aria-current="page"{% endif %}>{{ c.name }}</a>
   {%- endfor %}
-</section>
-{%- endfor -%}
+</nav>
+{%- endif -%}
+
+{% include entry-list.html posts=posts %}
