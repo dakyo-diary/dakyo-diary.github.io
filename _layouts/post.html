@@ -3,22 +3,40 @@ layout: default
 ---
 {%- assign weekdays = "일,월,화,수,목,금,토" | split: "," -%}
 {%- assign wd_index = page.date | date: "%w" | plus: 0 -%}
-<article class="single">
+<article class="single{% if page.kind == 'review' %} single--review{% endif %}">
   <p class="single-meta">
+    {%- if page.kind == 'review' %}
+    <a href="{{ '/reviews/' | append: page.category_slug | append: '/' | relative_url }}">{{ page.category }}</a> ·
+    {%- endif %}
     <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%Y년 %-m월 %-d일" }} {{ weekdays[wd_index] }}요일 · {{ page.date | date: "%H:%M" }}</time>
   </p>
+  {%- if page.kind == 'review' %}
+  <h1 class="single-title">{{ page.work }}</h1>
+  {%- if page.rating %}<p class="single-rating" aria-label="평점 {{ page.rating }}점">★ {{ page.rating }}<span> / 5</span></p>{% endif %}
+  {%- unless page.auto_title %}<p class="review-line review-line--single">{{ page.title }}</p>{% endunless %}
+  {%- else %}
   {%- unless page.auto_title %}
   <h1 class="single-title">{{ page.title }}</h1>
   {%- endunless %}
+  {%- endif %}
+  {%- if page.spoiler %}
+  <details class="spoiler">
+    <summary>스포일러 포함 · 펼쳐 보기</summary>
+    <div class="entry-body single-body">{{ content }}</div>
+  </details>
+  {%- else %}
   <div class="entry-body single-body">{{ content }}</div>
+  {%- endif %}
 </article>
 
+{%- capture newer_label %}{% if page.next.kind == 'review' %}{{ page.next.work }}{% elsif page.next.auto_title %}{{ page.next.date | date: "%-m월 %-d일" }}{% else %}{{ page.next.title }}{% endif %}{% endcapture -%}
+{%- capture older_label %}{% if page.previous.kind == 'review' %}{{ page.previous.work }}{% elsif page.previous.auto_title %}{{ page.previous.date | date: "%-m월 %-d일" }}{% else %}{{ page.previous.title }}{% endif %}{% endcapture %}
 <nav class="pager">
   {%- if page.next %}
-  <a class="newer" href="{{ page.next.url | relative_url }}"><span>다음 기록</span>{% if page.next.auto_title %}{{ page.next.date | date: "%-m월 %-d일" }}{% else %}{{ page.next.title }}{% endif %}</a>
+  <a class="newer" href="{{ page.next.url | relative_url }}"><span>다음 기록</span>{{ newer_label }}</a>
   {%- else %}<span></span>{% endif %}
   {%- if page.previous %}
-  <a class="older" href="{{ page.previous.url | relative_url }}"><span>이전 기록</span>{% if page.previous.auto_title %}{{ page.previous.date | date: "%-m월 %-d일" }}{% else %}{{ page.previous.title }}{% endif %}</a>
+  <a class="older" href="{{ page.previous.url | relative_url }}"><span>이전 기록</span>{{ older_label }}</a>
   {%- endif %}
 </nav>
 <p class="back"><a href="{{ '/' | relative_url }}">전체 기록</a></p>
