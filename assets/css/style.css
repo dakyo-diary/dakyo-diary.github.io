@@ -20,6 +20,7 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html { -webkit-text-size-adjust: 100%; }
 body {
   margin: 0;
@@ -150,6 +151,57 @@ a { color: inherit; }
 .spoiler summary::after { content: " ↓"; }
 .spoiler[open] summary::after { content: " ↑"; }
 .spoiler[open] summary { margin-bottom: 6px; }
+
+/* locked posts */
+.lock-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+  margin: 0 0 clamp(28px, 5vw, 44px);
+  padding: 14px 0;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--soft);
+}
+.single .lock-form { margin-top: 18px; }
+.lock-form label { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; }
+.lock-form input {
+  font: inherit;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--soft);
+  padding: 4px 2px;
+  width: 11rem;
+  outline: none;
+}
+.lock-form input:focus { border-bottom-color: var(--mark); }
+.lock-form button {
+  font: inherit;
+  color: var(--paper);
+  background: var(--ink);
+  border: 0;
+  border-radius: 3px;
+  padding: 4px 12px;
+  cursor: pointer;
+}
+.lock-msg { color: var(--mark); }
+.locked-label { margin: 0; color: var(--faint); font-family: var(--sans); font-size: 14px; padding-top: 6px; }
+.unlocked-mark { margin: 0 0 2px; font-size: 11px; opacity: 0.5; }
+.lock-forget {
+  margin-left: 12px;
+  font: inherit;
+  color: var(--faint);
+  background: none;
+  border: 0;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
 
 /* single entry */
 .single-meta { margin: 0 0 14px; font-family: var(--sans); font-size: 13px; color: var(--soft); letter-spacing: 0.01em; }
