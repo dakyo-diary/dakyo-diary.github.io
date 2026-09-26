@@ -1,0 +1,6 @@
+{%- assign weekdays = "일,월,화,수,목,금,토" | split: "," -%}
+{%- assign wd_index = include.date | date: "%w" | plus: 0 -%}
+<time class="entry-date" datetime="{{ include.date | date_to_xmlschema }}">
+  <span class="day">{{ include.date | date: "%-d" }}</span>
+  <span class="sub">{{ weekdays[wd_index] }} · {{ include.date | date: "%H:%M" }}</span>
+</time>
