@@ -1,0 +1,16 @@
+{%- if include.posts.size == 0 -%}
+<p class="empty">아직 공개된 기록이 없습니다.</p>
+{%- endif -%}
+{%- assign months = include.posts | group_by_exp: "p", "p.date | date: '%Y-%m'" -%}
+{%- for month in months -%}
+{%- assign first = month.items | first -%}
+<section class="month">
+  <h2 class="month-label">
+    <span class="y">{{ first.date | date: "%Y" }}</span>
+    <span class="m">{{ first.date | date: "%-m" }}월</span>
+  </h2>
+  {%- for post in month.items %}
+  {% include entry.html post=post %}
+  {%- endfor %}
+</section>
+{%- endfor -%}
