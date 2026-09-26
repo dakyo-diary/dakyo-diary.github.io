@@ -3,6 +3,17 @@ layout: default
 ---
 {%- assign weekdays = "일,월,화,수,목,금,토" | split: "," -%}
 {%- assign wd_index = page.date | date: "%w" | plus: 0 -%}
+{%- if page.locked %}
+<article class="single">
+  <p class="single-meta">
+    <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%Y년 %-m월 %-d일" }} {{ weekdays[wd_index] }}요일 · {{ page.date | date: "%H:%M" }}</time>
+  </p>
+  <div class="locked" data-single="1" data-enc="{{ page.enc }}" data-salt="{{ page.enc_salt }}" data-iter="{{ page.enc_iter }}" data-url="{{ page.url | relative_url }}" data-base="{{ site.baseurl }}">
+    <p class="locked-label">🔒 잠긴 글입니다.</p>
+  </div>
+  {% include lock-form.html %}
+</article>
+{%- else %}
 <article class="single{% if page.kind == 'review' %} single--review{% endif %}">
   <p class="single-meta">
     {%- if page.kind == 'review' %}
@@ -28,9 +39,10 @@ layout: default
   <div class="entry-body single-body">{{ content }}</div>
   {%- endif %}
 </article>
+{%- endif %}
 
-{%- capture newer_label %}{% if page.next.kind == 'review' %}{{ page.next.work }}{% elsif page.next.auto_title %}{{ page.next.date | date: "%-m월 %-d일" }}{% else %}{{ page.next.title }}{% endif %}{% endcapture -%}
-{%- capture older_label %}{% if page.previous.kind == 'review' %}{{ page.previous.work }}{% elsif page.previous.auto_title %}{{ page.previous.date | date: "%-m월 %-d일" }}{% else %}{{ page.previous.title }}{% endif %}{% endcapture %}
+{%- capture newer_label %}{% if page.next.locked %}잠긴 글{% elsif page.next.kind == 'review' %}{{ page.next.work }}{% elsif page.next.auto_title %}{{ page.next.date | date: "%-m월 %-d일" }}{% else %}{{ page.next.title }}{% endif %}{% endcapture -%}
+{%- capture older_label %}{% if page.previous.locked %}잠긴 글{% elsif page.previous.kind == 'review' %}{{ page.previous.work }}{% elsif page.previous.auto_title %}{{ page.previous.date | date: "%-m월 %-d일" }}{% else %}{{ page.previous.title }}{% endif %}{% endcapture %}
 <nav class="pager">
   {%- if page.next %}
   <a class="newer" href="{{ page.next.url | relative_url }}"><span>다음 기록</span>{{ newer_label }}</a>
