@@ -1,0 +1,14 @@
+- name: "소설"
+  slug: novel
+- name: "만화"
+  slug: manga
+- name: "애니"
+  slug: anime
+- name: "영화"
+  slug: movie
+- name: "드라마"
+  slug: drama
+- name: "게임"
+  slug: game
+- name: "음악"
+  slug: music
