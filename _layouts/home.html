@@ -15,9 +15,11 @@ layout: default
   </h2>
   {%- for post in month.items %}
   <article class="entry">
-    {% include entry-date.html date=post.date %}
+    {% include entry-date.html date=post.date url=post.url %}
     <div class="entry-main">
+      {%- unless post.auto_title %}
       <h3 class="entry-title"><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
+      {%- endunless %}
       <div class="entry-body">{{ post.content }}</div>
     </div>
   </article>
