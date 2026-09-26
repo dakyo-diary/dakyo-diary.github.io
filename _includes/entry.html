@@ -1,14 +1,20 @@
 {%- assign post = include.post -%}
 {%- if post.locked -%}
 <article class="entry entry--locked">
-  {% include entry-date.html date=post.date url=post.url %}
+  <div class="entry-side">
+    {% include entry-date.html date=post.date url=post.url %}
+    {% include share-button.html post=post %}
+  </div>
   <div class="entry-main locked" data-enc="{{ post.enc }}" data-salt="{{ post.enc_salt }}" data-iter="{{ post.enc_iter }}" data-url="{{ post.url | relative_url }}" data-base="{{ site.baseurl }}">
     <p class="locked-label">🔒 잠긴 글</p>
   </div>
 </article>
 {%- else -%}
 <article class="entry{% if post.kind == 'review' %} entry--review{% endif %}">
-  {% include entry-date.html date=post.date url=post.url %}
+  <div class="entry-side">
+    {% include entry-date.html date=post.date url=post.url %}
+    {% include share-button.html post=post %}
+  </div>
   <div class="entry-main">
     {%- if post.kind == 'review' %}
     <p class="review-label">
