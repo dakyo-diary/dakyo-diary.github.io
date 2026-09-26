@@ -1,0 +1,7 @@
+title: "dakyo-diary"
+description: ""
+lang: ko
+timezone: Asia/Seoul
+theme: minima
+permalink: /:year/:month/:day/:title/
+show_excerpts: true
