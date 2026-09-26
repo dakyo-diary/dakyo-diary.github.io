@@ -19,6 +19,14 @@
   <div class="page">
     <header class="masthead">
       <a class="site-name" href="{{ '/' | relative_url }}">{{ site.title }}</a>
+      {%- assign section = "all" -%}
+      {%- if page.url contains "/diary/" or page.filter == "diary" or page.kind == "diary" %}{% assign section = "diary" %}{% endif -%}
+      {%- if page.url contains "/reviews/" or page.kind == "review" %}{% assign section = "review" %}{% endif %}
+      <nav class="sections" aria-label="보기">
+        <a href="{{ '/' | relative_url }}"{% if section == "all" %} aria-current="page"{% endif %}>전체</a>
+        <a href="{{ '/diary/' | relative_url }}"{% if section == "diary" %} aria-current="page"{% endif %}>일기</a>
+        <a href="{{ '/reviews/' | relative_url }}"{% if section == "review" %} aria-current="page"{% endif %}>후기</a>
+      </nav>
     </header>
     <main>
       {{ content }}
