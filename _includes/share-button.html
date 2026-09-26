@@ -1,0 +1,5 @@
+{%- if include.post.locked -%}{%- assign share_title = "🔒 잠긴 글" -%}
+{%- elsif include.post.kind == "review" -%}{%- assign share_title = include.post.work -%}
+{%- elsif include.post.auto_title -%}{%- capture share_title %}{{ include.post.date | date: "%-m월 %-d일" }}의 기록{% endcapture -%}
+{%- else -%}{%- assign share_title = include.post.title -%}{%- endif -%}
+<button type="button" class="share-btn" data-url="{{ include.post.url | relative_url }}" data-title="{{ share_title | strip | escape }}" aria-label="공유">공유</button>
