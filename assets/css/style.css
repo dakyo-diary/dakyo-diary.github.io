@@ -81,13 +81,15 @@ a { color: inherit; }
 }
 .month-label + .entry { border-top-color: var(--ink); }
 
-.entry-date {
+.entry-date { text-decoration: none; align-self: start; }
+.entry-date time {
   display: flex;
   flex-direction: column;
   font-family: var(--sans);
   line-height: 1.2;
   padding-top: 2px;
 }
+.entry-date:hover .day { color: var(--mark); }
 .entry-date .day { font-size: 28px; font-weight: 300; letter-spacing: -0.02em; }
 .entry-date .sub { margin-top: 6px; font-size: 12px; color: var(--faint); letter-spacing: 0.02em; }
 
@@ -104,10 +106,9 @@ a { color: inherit; }
 .entry-body a { color: var(--mark); text-underline-offset: 3px; }
 
 /* single entry */
-.entry--single { border-top: 0; padding-top: 0; }
-.entry-month { margin: 0 0 4px; font-family: var(--sans); font-size: 13px; color: var(--faint); }
-.entry--single .entry-title { font-size: clamp(22px, 4.5vw, 28px); margin-bottom: 18px; }
-.entry--single .entry-body { font-size: 18px; }
+.single-meta { margin: 0 0 14px; font-family: var(--sans); font-size: 13px; color: var(--soft); letter-spacing: 0.01em; }
+.single-title { margin: 0 0 22px; font-size: clamp(22px, 4.5vw, 28px); font-weight: 700; line-height: 1.45; }
+.single-body { font-size: 18px; }
 
 .pager {
   display: flex;
@@ -137,7 +138,7 @@ a { color: inherit; }
 @media (max-width: 540px) {
   body { font-size: 16px; }
   .entry { grid-template-columns: 1fr; }
-  .entry-date { flex-direction: row; align-items: baseline; gap: 8px; margin-bottom: 6px; }
+  .entry-date time { flex-direction: row; align-items: baseline; gap: 8px; margin-bottom: 6px; }
   .entry-date .day { font-size: 20px; }
   .entry-date .sub { margin-top: 0; }
 }
