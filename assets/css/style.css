@@ -145,12 +145,11 @@ a { color: inherit; }
 .entry-body img[src] { cursor: zoom-in; }
 
 /* writing heatmap (heatmap.js) */
-.heatmap { margin: 0 0 2.4em; font-family: var(--sans); font-size: 12px; color: var(--soft); }
+.heatmap { --cell: 11px; margin: 0 0 2.4em; font-family: var(--sans); font-size: 12px; color: var(--soft); }
 .heatmap-summary { display: flex; justify-content: space-between; gap: 12px; margin: 0 0 10px; font-size: 13px; }
 .heatmap-streak { color: var(--ink); font-weight: 600; }
 .heatmap-scroll { overflow-x: auto; padding-bottom: 4px; scrollbar-width: thin; }
 .heatmap-grid {
-  --cell: 11px;
   display: grid;
   grid-template-columns: 16px repeat(var(--weeks), var(--cell));
   grid-template-rows: 14px repeat(7, var(--cell));
