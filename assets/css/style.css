@@ -144,6 +144,19 @@ a { color: inherit; }
 }
 .entry-body img[src] { cursor: zoom-in; }
 
+/* memo threads: replies under the root memo */
+.entry-body .reply {
+  margin: 1.1em 0 0;
+  padding: 0 0 0 14px;
+  border-left: 2px solid var(--rule);
+}
+.entry-body .reply-time {
+  margin: 0 0 0.3em;
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--faint);
+}
+
 /* writing heatmap (heatmap.js) */
 .heatmap { --cell: 11px; margin: 0 0 2.4em; font-family: var(--sans); font-size: 12px; color: var(--soft); }
 .heatmap-summary { display: flex; justify-content: space-between; gap: 12px; margin: 0 0 10px; font-size: 13px; }
