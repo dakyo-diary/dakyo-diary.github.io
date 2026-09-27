@@ -168,7 +168,13 @@
     const single = el.dataset.single === "1";
     const url = el.dataset.url;
     const base = el.dataset.base || "";
-    const body = `<div class="entry-body${single ? " single-body" : ""}">${bodyWithPhotos(d.body, d.photos)}</div>`;
+    // A memo thread: replies follow the root text, like on public posts.
+    const replies = (d.replies || []).map((r) => {
+      const [date, time] = String(r.at).split(" ");
+      const when = `${Number(date.slice(5, 7))}월 ${Number(date.slice(8, 10))}일 ${esc(time || "")}`;
+      return `<div class="reply"><p class="reply-time">${when}</p>${bodyWithPhotos(r.body, r.photos)}</div>`;
+    }).join("");
+    const body = `<div class="entry-body${single ? " single-body" : ""}">${bodyWithPhotos(d.body, d.photos)}${replies}</div>`;
     let head = "";
     if (d.kind === "review") {
       const cat = `<a href="${base}/reviews/${esc(d.category_slug)}/">${esc(d.category)}</a>`;
