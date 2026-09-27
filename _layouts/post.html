@@ -19,6 +19,8 @@ layout: default
   <p class="single-meta">
     {%- if page.kind == 'review' %}
     <a href="{{ '/reviews/' | append: page.category_slug | append: '/' | relative_url }}">{{ page.category }}</a> ·
+    {%- elsif page.kind == 'memo' %}
+    <a href="{{ '/memos/' | relative_url }}">메모</a> ·
     {%- endif %}
     <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%Y년 %-m월 %-d일" }} {{ weekdays[wd_index] }}요일 · {{ page.date | date: "%H:%M" }}</time>
     {% include share-button.html post=page %}
