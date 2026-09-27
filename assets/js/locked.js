@@ -79,8 +79,22 @@
     return decryptWithKey(await deriveKeyBytes(password, saltB64, iterations), encB64);
   }
 
+  /**
+   * Decrypts an encrypted photo file (12-byte IV + AES-GCM ciphertext).
+   *
+   * @param {ArrayBuffer|Uint8Array} keyBytes - Raw AES key.
+   * @param {ArrayBuffer|Uint8Array} data - File contents.
+   * @returns {Promise<ArrayBuffer>} The JPEG bytes.
+   * @throws {Error} If the key is wrong or the data was altered.
+   */
+  async function decryptBytes(keyBytes, data) {
+    const key = await subtle.importKey("raw", keyBytes, "AES-GCM", false, ["decrypt"]);
+    const bytes = new Uint8Array(data);
+    return subtle.decrypt({ name: "AES-GCM", iv: bytes.slice(0, 12) }, key, bytes.slice(12));
+  }
+
   if (typeof module !== "undefined" && module.exports) {
-    module.exports = { decryptPayload };
+    module.exports = { decryptPayload, decryptBytes };
     return;
   }
 
@@ -100,6 +114,50 @@
   }
 
   /**
+   * Renders the body with photo placeholders: `[사진N]` markers become
+   * images (still encrypted — see `loadPhotos`), unplaced photos follow the
+   * text in number order. Unknown markers stay as text, like on public posts.
+   *
+   * @param {string} text - Entry body.
+   * @param {{num: number, src: string}[]} photos - Encrypted photo files.
+   * @returns {string} HTML.
+   */
+  function bodyWithPhotos(text, photos) {
+    const byNum = new Map((photos || []).map((p) => [p.num, p]));
+    const placed = new Set();
+    const img = (p) => `<img class="locked-photo" data-src="${esc(p.src)}" alt="사진 ${p.num}">`;
+    const html = bodyHtml(text).replace(/\[사진(\d+)\]/g, (m, n) => {
+      const p = byNum.get(Number(n));
+      if (!p) return m;
+      placed.add(p.num);
+      return img(p);
+    });
+    const rest = [...byNum.values()].filter((p) => !placed.has(p.num)).sort((a, b) => a.num - b.num);
+    return html + rest.map((p) => `<p>${img(p)}</p>`).join("");
+  }
+
+  /**
+   * Fetches and decrypts the photos inside an unlocked entry.
+   *
+   * @param {HTMLElement} el - Unlocked entry element.
+   * @param {Uint8Array} keyBytes - Raw AES key.
+   * @param {string} base - Site base URL.
+   */
+  async function loadPhotos(el, keyBytes, base) {
+    await Promise.all([...el.querySelectorAll("img.locked-photo[data-src]")].map(async (img) => {
+      try {
+        const res = await fetch(base + img.dataset.src);
+        if (!res.ok) throw new Error(String(res.status));
+        const jpeg = await decryptBytes(keyBytes, await res.arrayBuffer());
+        img.src = URL.createObjectURL(new Blob([jpeg], { type: "image/jpeg" }));
+        img.removeAttribute("data-src");
+      } catch {
+        img.alt = "사진을 불러오지 못했습니다";
+      }
+    }));
+  }
+
+  /**
    * Builds the unlocked entry markup (mirrors _includes/entry.html / post.html).
    *
    * @param {object} d - Decrypted fields.
@@ -110,7 +168,7 @@
     const single = el.dataset.single === "1";
     const url = el.dataset.url;
     const base = el.dataset.base || "";
-    const body = `<div class="entry-body${single ? " single-body" : ""}">${bodyHtml(d.body)}</div>`;
+    const body = `<div class="entry-body${single ? " single-body" : ""}">${bodyWithPhotos(d.body, d.photos)}</div>`;
     let head = "";
     if (d.kind === "review") {
       const cat = `<a href="${base}/reviews/${esc(d.category_slug)}/">${esc(d.category)}</a>`;
@@ -158,6 +216,7 @@
         el.innerHTML = entryHtml(data, el);
         el.classList.remove("locked");
         el.classList.add("unlocked");
+        loadPhotos(el, fromB64(keyB64), el.dataset.base || "");
         any = true;
       } catch {
         if (!password) { try { localStorage.removeItem(KEY_PREFIX + salt); } catch { /* ignore */ } }
