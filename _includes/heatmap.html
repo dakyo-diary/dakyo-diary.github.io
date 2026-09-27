@@ -13,7 +13,7 @@
       {%- assign label = "잠긴 글" -%}
       {%- assign reply_label = "잠긴 글" -%}
     {%- else -%}
-      {%- assign reply_label = "메모 답글" -%}
+      {%- assign reply_label = "메모 이어쓰기" -%}
       {%- if post.kind == "review" -%}
         {%- assign label = post.work -%}
       {%- elsif post.auto_title -%}
