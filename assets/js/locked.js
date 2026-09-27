@@ -121,9 +121,15 @@
           + (d.auto_title ? "" : `<p class="review-line review-line--single">${esc(d.title)}</p>`)
         : `<p class="review-label">${cat}${rating}</p><h3 class="work-title"><a href="${url}">${esc(d.work)}</a></h3>`
           + (d.auto_title ? "" : `<p class="review-line">${esc(d.title)}</p>`);
-    } else if (!d.auto_title) {
-      head = single ? `<h1 class="single-title">${esc(d.title)}</h1>`
-        : `<h3 class="entry-title"><a href="${url}">${esc(d.title)}</a></h3>`;
+    } else {
+      if (d.kind === "memo") {
+        const memo = `<a href="${base}/memos/">메모</a>`;
+        head = single ? `<p class="single-meta">${memo}</p>` : `<p class="review-label">${memo}</p>`;
+      }
+      if (!d.auto_title) {
+        head += single ? `<h1 class="single-title">${esc(d.title)}</h1>`
+          : `<h3 class="entry-title"><a href="${url}">${esc(d.title)}</a></h3>`;
+      }
     }
     const content = d.spoiler
       ? `<details class="spoiler"><summary>스포일러 포함 · 펼쳐 보기</summary>${body}</details>` : body;
