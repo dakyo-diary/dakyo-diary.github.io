@@ -26,6 +26,9 @@
     <p class="review-line">{{ post.title }}</p>
     {%- endunless %}
     {%- else %}
+    {%- if post.kind == 'memo' %}
+    <p class="review-label"><a href="{{ '/memos/' | relative_url }}">메모</a></p>
+    {%- endif %}
     {%- unless post.auto_title %}
     <h3 class="entry-title"><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
     {%- endunless %}
