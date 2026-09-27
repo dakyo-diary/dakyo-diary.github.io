@@ -135,6 +135,18 @@ a { color: inherit; }
 .entry-body p { margin: 0 0 0.9em; }
 .entry-body p:last-child { margin-bottom: 0; }
 .entry-body a { color: var(--mark); text-underline-offset: 3px; }
+.entry-body img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0.6em 0;
+  border-radius: 4px;
+}
+.entry-body img.locked-photo:not([src]) {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: var(--rule);
+}
 
 /* reviews */
 .review-label {
