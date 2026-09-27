@@ -2,10 +2,11 @@
  * Writing heatmap ("잔디") for the blog home page.
  *
  * Reads the post list embedded by `_includes/heatmap.html` (KST date, time,
- * URL, label per published post), draws the last 53 weeks as a
- * Sunday-first grid shaded by posts per day, and shows the current streak
- * and this year's total. Tapping a day opens its post, or lists them when
- * there are several.
+ * URL, label per published post), draws the last 53 weeks as rows
+ * (Sunday → Saturday, newest week on top) shaded by posts per day, and shows
+ * the current streak and this year's total. Only the latest few weeks are
+ * shown until "이전 기록 펼치기". Tapping a day opens its post, or lists them
+ * when there are several.
  *
  * The pure helpers are exported for Node so they can be unit tested.
  */
@@ -96,7 +97,9 @@
 
   // ── browser ──────────────────────────────────────────────────────────────
 
-  const WEEKDAY_LABELS = ["", "월", "", "수", "", "금", ""];
+  // Rows shown before "이전 기록 펼치기" (newest weeks).
+  const VISIBLE_WEEKS = 5;
+  const WEEKDAY_LABELS = ["일", "월", "화", "수", "목", "금", "토"];
 
   /** Today's date in Korea, whatever the reader's time zone. */
   function todayKst() {
@@ -107,7 +110,8 @@
   const korDate = (day) => `${+day.slice(5, 7)}월 ${+day.slice(8, 10)}일`;
 
   /**
-   * Renders the heatmap into its section.
+   * Renders the heatmap into its section: one row per week (Sunday → Saturday),
+   * newest week on top; only the latest VISIBLE_WEEKS rows until expanded.
    *
    * @param {HTMLElement} root - `.heatmap` section holding the JSON data.
    */
@@ -122,7 +126,7 @@
     const counts = dayCounts(posts);
     const byDay = new Map();
     posts.forEach((p) => { if (!byDay.has(p.d)) byDay.set(p.d, []); byDay.get(p.d).push(p); });
-    const weeks = buildGrid(today);
+    const weeks = buildGrid(today).reverse();
     const days = streak(counts, today);
 
     const summary = document.createElement("p");
@@ -131,25 +135,21 @@
     summary.querySelector(".heatmap-streak").textContent = days ? `🔥 ${days}일 연속` : "오늘 첫 줄을 적어 볼까요";
     summary.querySelector(".heatmap-total").textContent = `올해 ${yearTotal(counts, +today.slice(0, 4))}개의 글`;
 
-    const scroller = document.createElement("div");
-    scroller.className = "heatmap-scroll";
     const grid = document.createElement("div");
     grid.className = "heatmap-grid";
-    grid.style.setProperty("--weeks", String(weeks.length));
-
-    // Row 1: month labels over the week in which each month starts.
     grid.append(Object.assign(document.createElement("span"), { className: "heatmap-corner" }));
-    weeks.forEach((col, i) => {
+    WEEKDAY_LABELS.forEach((wd) => grid.append(Object.assign(document.createElement("span"), { className: "heatmap-wd", textContent: wd })));
+
+    weeks.forEach((week, row) => {
+      const old = row >= VISIBLE_WEEKS;
+      // Month label on the row where a month begins (and on the top row).
       const label = document.createElement("span");
       label.className = "heatmap-month";
-      const first = col.find((d) => d && d.endsWith("-01"));
-      if (first || i === 0) label.textContent = `${+(first || col.find(Boolean)).slice(5, 7)}월`;
+      const first = week.find((d) => d && d.endsWith("-01"));
+      if (first || row === 0) label.textContent = `${+(first || week.find(Boolean)).slice(5, 7)}월`;
+      if (old) label.dataset.old = "";
       grid.append(label);
-    });
-    for (let r = 0; r < 7; r += 1) {
-      grid.append(Object.assign(document.createElement("span"), { className: "heatmap-wd", textContent: WEEKDAY_LABELS[r] }));
-      weeks.forEach((col) => {
-        const day = col[r];
+      week.forEach((day) => {
         const n = day ? counts.get(day) || 0 : 0;
         const cell = document.createElement(n ? "button" : "span");
         cell.className = `heatmap-cell l${level(n)}${day ? "" : " future"}${day === today ? " today" : ""}`;
@@ -161,14 +161,29 @@
           cell.type = "button";
           cell.dataset.day = day;
         }
+        if (old) cell.dataset.old = "";
         grid.append(cell);
       });
-    }
-    scroller.append(grid);
+    });
+
+    const more = document.createElement("button");
+    more.type = "button";
+    more.className = "heatmap-more";
+    const setExpanded = (on) => {
+      root.classList.toggle("expanded", on);
+      more.textContent = on ? "접기 ▴" : "이전 기록 펼치기 ▾";
+      more.setAttribute("aria-expanded", String(on));
+    };
+    more.addEventListener("click", () => setExpanded(!root.classList.contains("expanded")));
+    setExpanded(false);
 
     const legend = document.createElement("p");
     legend.className = "heatmap-legend";
     legend.innerHTML = "<span>적음</span>" + [0, 1, 2, 3, 4].map((l) => `<i class="heatmap-cell l${l}"></i>`).join("") + "<span>많음</span>";
+
+    const foot = document.createElement("div");
+    foot.className = "heatmap-foot";
+    foot.append(more, legend);
 
     const list = document.createElement("div");
     list.className = "heatmap-day";
@@ -191,9 +206,8 @@
       );
     });
 
-    root.append(summary, scroller, legend, list);
+    root.append(summary, grid, foot, list);
     root.hidden = false;
-    scroller.scrollLeft = scroller.scrollWidth;  // newest weeks first on narrow screens
   }
 
   document.addEventListener("DOMContentLoaded", () => {
