@@ -2,7 +2,9 @@
 layout: default
 ---
 {%- if page.filter == "diary" -%}
-  {%- assign posts = site.posts | where_exp: "p", "p.kind != 'review'" | where_exp: "p", "p.locked != true" -%}
+  {%- assign posts = site.posts | where_exp: "p", "p.kind != 'review'" | where_exp: "p", "p.kind != 'memo'" | where_exp: "p", "p.locked != true" -%}
+{%- elsif page.filter == "memo" -%}
+  {%- assign posts = site.posts | where: "kind", "memo" -%}
 {%- elsif page.filter == "review" -%}
   {%- if page.category_slug -%}
     {%- assign posts = site.posts | where: "category_slug", page.category_slug -%}
