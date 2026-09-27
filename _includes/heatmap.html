@@ -1,21 +1,33 @@
 {%- comment -%}
   Writing heatmap on the home page, drawn by assets/js/heatmap.js from this
   list of published posts. Locked posts only expose what the blog already
-  shows (date/time), labelled "잠긴 글".
+  shows (date/time), labelled "잠긴 글". Memo replies count on the day they
+  were written (their times come from the post's reply_dates) and link to
+  the thread's post.
 {%- endcomment -%}
 <section class="heatmap" aria-label="글쓰기 기록" hidden>
   <script type="application/json" class="heatmap-data">[
+  {%- assign first = true -%}
   {%- for post in site.posts -%}
     {%- if post.locked -%}
       {%- assign label = "잠긴 글" -%}
-    {%- elsif post.kind == "review" -%}
-      {%- assign label = post.work -%}
-    {%- elsif post.auto_title -%}
-      {%- if post.kind == "memo" -%}{%- assign label = "메모" -%}{%- else -%}{%- assign label = "일기" -%}{%- endif -%}
+      {%- assign reply_label = "잠긴 글" -%}
     {%- else -%}
-      {%- assign label = post.title -%}
+      {%- assign reply_label = "메모 답글" -%}
+      {%- if post.kind == "review" -%}
+        {%- assign label = post.work -%}
+      {%- elsif post.auto_title -%}
+        {%- if post.kind == "memo" -%}{%- assign label = "메모" -%}{%- else -%}{%- assign label = "일기" -%}{%- endif -%}
+      {%- else -%}
+        {%- assign label = post.title -%}
+      {%- endif -%}
     {%- endif -%}
-    {"d":{{ post.date | date: "%Y-%m-%d" | jsonify }},"t":{{ post.date | date: "%H:%M" | jsonify }},"u":{{ post.url | relative_url | jsonify }},"l":{{ label | jsonify | replace: "</", "<\/" }}}{% unless forloop.last %},{% endunless %}
+    {%- assign url = post.url | relative_url | jsonify -%}
+    {%- unless first %},{% endunless -%}{%- assign first = false -%}
+    {"d":{{ post.date | date: "%Y-%m-%d" | jsonify }},"t":{{ post.date | date: "%H:%M" | jsonify }},"u":{{ url }},"l":{{ label | jsonify | replace: "</", "<\/" }}}
+    {%- for rd in post.reply_dates -%}
+    ,{"d":{{ rd | slice: 0, 10 | jsonify }},"t":{{ rd | slice: 11, 5 | jsonify }},"u":{{ url }},"l":{{ reply_label | jsonify }}}
+    {%- endfor -%}
   {%- endfor -%}
   ]</script>
 </section>
