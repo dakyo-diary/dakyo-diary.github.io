@@ -24,4 +24,6 @@ layout: default
 </nav>
 {%- endif -%}
 
+{%- unless page.filter -%}{% include heatmap.html %}{%- endunless -%}
+
 {% include entry-list.html posts=posts %}
